@@ -1,0 +1,9 @@
+{
+  "modmenu.nameTranslation.feed-assist": "Feed Assist",
+  "modmenu.descriptionTranslation.feed-assist": "Right-click an animal with breeding food to feed nearby adult animals.",
+  "text.feed-assist.title": "Feed Assist Settings",
+  "text.feed-assist.description": "Multiplayer uses the server configuration.",
+  "text.feed-assist.option.enabled.on": "Feed Assist: ON",
+  "text.feed-assist.option.enabled.off": "Feed Assist: OFF",
+  "text.feed-assist.option.range": "Feeding radius: %s blocks"
+}

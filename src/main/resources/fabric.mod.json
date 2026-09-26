@@ -1,0 +1,21 @@
+{
+  "schemaVersion": 1,
+  "id": "feed-assist",
+  "version": "${version}",
+  "name": "Feed Assist",
+  "description": "Feed nearby adult animals by right-clicking one with breeding food.",
+  "authors": ["nekodon"],
+  "license": "MIT",
+  "environment": "*",
+  "entrypoints": {
+    "main": ["com.nekodon.feedassist.FeedAssist"],
+    "modmenu": ["com.nekodon.feedassist.ModMenuIntegration"]
+  },
+  "depends": {
+    "fabricloader": ">=${loader_version}",
+    "minecraft": "${minecraft_version}",
+    "java": ">=${java_version}",
+    "fabric-api": "*"
+  },
+  "suggests": {"modmenu": "*"}
+}

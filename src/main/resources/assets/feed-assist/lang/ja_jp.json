@@ -1,0 +1,9 @@
+{
+  "modmenu.nameTranslation.feed-assist": "Feed Assist",
+  "modmenu.descriptionTranslation.feed-assist": "餌で動物を右クリックすると、周囲の大人の動物にもまとめて餌やりします。",
+  "text.feed-assist.title": "Feed Assist 設定",
+  "text.feed-assist.description": "マルチプレイではサーバー側の設定が適用されます。",
+  "text.feed-assist.option.enabled.on": "Feed Assist: ON",
+  "text.feed-assist.option.enabled.off": "Feed Assist: OFF",
+  "text.feed-assist.option.range": "餌やり半径: %s ブロック"
+}
