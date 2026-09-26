@@ -1,10 +1,10 @@
 # Feed Assist
 
-Fabric / Minecraft 1.21.1 / Java 21
+Fabric / Minecraft 26.1.2 / Java 25
 
 ## 導入
-配布用の feed-assist-mc1.21.1-1.0.0.jar と Fabric API を mods フォルダに入れてください。
-Fabric Loader 0.18.3 以降が必要です。設定画面を使う場合は Mod Menu 11.0.1 も導入してください（任意）。
+配布用の feed-assist-mc26.1.2-1.0.0.jar と Fabric API を mods フォルダに入れてください。
+Fabric Loader 0.19.3 以降が必要です。設定画面を使う場合は Mod Menu 18.0.0 も導入してください（任意）。
 シングルプレイではクライアントに、マルチプレイではサーバーに導入します。
 サーバー側だけでも動作します。クライアント側だけに入れても、未導入の外部サーバーでは範囲餌やりできません。
 
@@ -32,7 +32,7 @@ config/feed-assist.json でも設定できます。ファイルを直接編集�
 
 ## ビルド
 Windows: .\gradlew.bat build
-生成先: build/libs/feed-assist-mc1.21.1-1.0.0.jar
+生成先: build/libs/feed-assist-mc26.1.2-1.0.0.jar
 
 ## ゲーム内の確認項目
 - 大人の牛・羊を複数置き、小麦で1匹を右クリックすると範囲内にハートが出て、頭数分の餌が減る。

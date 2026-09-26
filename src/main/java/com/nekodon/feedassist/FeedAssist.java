@@ -3,12 +3,11 @@ package com.nekodon.feedassist;
 import com.nekodon.feedassist.config.ModConfig;
 import net.fabricmc.api.ModInitializer;
 import net.fabricmc.fabric.api.event.player.UseEntityCallback;
-import net.minecraft.entity.passive.AnimalEntity;
-import net.minecraft.entity.passive.AbstractHorseEntity;
-import net.minecraft.entity.passive.TameableEntity;
-import net.minecraft.entity.player.PlayerEntity;
-import net.minecraft.item.ItemStack;
-import net.minecraft.util.ActionResult;
+import net.minecraft.world.entity.animal.Animal;
+import net.minecraft.world.entity.animal.equine.AbstractHorse;
+import net.minecraft.world.entity.TamableAnimal;
+import net.minecraft.world.item.ItemStack;
+import net.minecraft.world.InteractionResult;
 
 import java.util.Comparator;
 
@@ -17,48 +16,49 @@ public class FeedAssist implements ModInitializer {
     public void onInitialize() {
         ModConfig.load();
         UseEntityCallback.EVENT.register((player, world, hand, entity, hitResult) -> {
-            if (world.isClient || !ModConfig.isEnabled() || player.isSpectator()
-                    || player.isSneaking() || !(entity instanceof AnimalEntity target)) {
-                return ActionResult.PASS;
+            if (world.isClientSide() || !ModConfig.isEnabled() || player.isSpectator()
+                    || player.isShiftKeyDown() || !(entity instanceof Animal target)) {
+                return InteractionResult.PASS;
             }
-            ItemStack food = player.getStackInHand(hand).copy();
+            ItemStack food = player.getItemInHand(hand).copy();
             if (!canFeed(target, food)) {
-                return ActionResult.PASS;
+                return InteractionResult.PASS;
             }
 
             // Use each animal's own feeding logic to retain its food rules and effects.
-            // Calling interactMob directly does not fire UseEntityCallback again.
-            ActionResult result = target.interactMob(player, hand);
-            if (!result.isAccepted() || !target.isInLove()) {
+            // Calling mobInteract directly does not fire UseEntityCallback again.
+            InteractionResult result = target.mobInteract(player, hand);
+            if (!result.consumesAction() || !target.isInLove()) {
                 return result;
             }
 
             int range = ModConfig.getFeedRange();
-            var nearby = world.getEntitiesByClass(AnimalEntity.class,
-                    player.getBoundingBox().expand(range),
-                    animal -> animal != target && animal.squaredDistanceTo(player) <= range * range);
-            nearby.sort(Comparator.comparingDouble(animal -> animal.squaredDistanceTo(player)));
-            for (AnimalEntity animal : nearby) {
-                ItemStack remaining = player.getStackInHand(hand);
-                if (remaining.isEmpty() || !ItemStack.areItemsEqual(food, remaining)) {
+            var nearby = world.getEntitiesOfClass(Animal.class,
+                    player.getBoundingBox().inflate(range),
+                    animal -> animal != target && animal.distanceToSqr(player) <= range * range);
+            nearby.sort(Comparator.comparingDouble(animal -> animal.distanceToSqr(player)));
+            for (Animal animal : nearby) {
+                ItemStack remaining = player.getItemInHand(hand);
+                if (remaining.isEmpty() || !ItemStack.isSameItem(food, remaining)) {
                     break;
                 }
                 if (canFeed(animal, remaining)) {
-                    animal.interactMob(player, hand);
+                    animal.mobInteract(player, hand);
                 }
             }
             return result;
         });
     }
 
-    private static boolean canFeed(AnimalEntity animal, ItemStack food) {
-        if (!animal.isAlive() || food.isEmpty() || animal.getBreedingAge() != 0
-                || !animal.canEat() || !animal.isBreedingItem(food)) {
+    private static boolean canFeed(Animal animal, ItemStack food) {
+        if (!animal.isAlive() || food.isEmpty() || animal.getAge() != 0
+                || !animal.canFallInLove() || !animal.isFood(food)) {
             return false;
         }
-        if (animal instanceof TameableEntity tameable && !tameable.isTamed()) {
+        if (animal instanceof TamableAnimal tameable && !tameable.isTame()) {
             return false;
         }
-        return !(animal instanceof AbstractHorseEntity horse) || horse.isTame();
+        return !(animal instanceof AbstractHorse horse) || horse.isTamed();
     }
 }
+

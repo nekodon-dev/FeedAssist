@@ -1,19 +1,19 @@
 package com.nekodon.feedassist.client;
 
 import com.nekodon.feedassist.config.ModConfig;
-import net.minecraft.client.gui.DrawContext;
-import net.minecraft.client.gui.screen.Screen;
-import net.minecraft.client.gui.widget.ButtonWidget;
-import net.minecraft.client.gui.widget.SliderWidget;
-import net.minecraft.text.Text;
+import net.minecraft.client.gui.GuiGraphicsExtractor;
+import net.minecraft.client.gui.screens.Screen;
+import net.minecraft.client.gui.components.Button;
+import net.minecraft.client.gui.components.AbstractSliderButton;
+import net.minecraft.network.chat.Component;
 
 public class FeedAssistConfigScreen extends Screen {
     private final Screen parent;
-    private RangeSliderWidget rangeSlider;
+    private RangeAbstractSliderButton rangeSlider;
     private boolean enabled;
 
     public FeedAssistConfigScreen(Screen parent) {
-        super(Text.translatable("text.feed-assist.title"));
+        super(Component.translatable("text.feed-assist.title"));
         this.parent = parent;
     }
 
@@ -23,59 +23,59 @@ public class FeedAssistConfigScreen extends Screen {
         int sliderY = this.height / 2 - 20;
         enabled = ModConfig.isEnabled();
 
-        rangeSlider = new RangeSliderWidget(centerX - 100, sliderY, 200, 20, ModConfig.getFeedRange());
-        addDrawableChild(rangeSlider);
+        rangeSlider = new RangeAbstractSliderButton(centerX - 100, sliderY, 200, 20, ModConfig.getFeedRange());
+        addRenderableWidget(rangeSlider);
 
-        addDrawableChild(ButtonWidget.builder(getEnabledText(), button -> {
+        addRenderableWidget(Button.builder(getEnabledText(), button -> {
                     enabled = !enabled;
                     button.setMessage(getEnabledText());
                 })
-                .dimensions(centerX - 100, sliderY + 35, 200, 20)
+                .bounds(centerX - 100, sliderY + 35, 200, 20)
                 .build());
 
 
-        addDrawableChild(ButtonWidget.builder(Text.translatable("gui.done"), button -> close())
-                .dimensions(centerX - 100, sliderY + 65, 200, 20)
+        addRenderableWidget(Button.builder(Component.translatable("gui.done"), button -> onClose())
+                .bounds(centerX - 100, sliderY + 65, 200, 20)
                 .build());
     }
 
     @Override
-    public void render(DrawContext context, int mouseX, int mouseY, float delta) {
-        super.render(context, mouseX, mouseY, delta);
-        context.drawCenteredTextWithShadow(this.textRenderer, this.title, this.width / 2, 20, 0xFFFFFF);
-        context.drawCenteredTextWithShadow(
-                this.textRenderer,
-                Text.translatable("text.feed-assist.description"),
+    public void extractRenderState(GuiGraphicsExtractor context, int mouseX, int mouseY, float delta) {
+        super.extractRenderState(context, mouseX, mouseY, delta);
+        context.centeredText(this.font, this.title, this.width / 2, 20, 0xFFFFFFFF);
+        context.centeredText(
+                this.font,
+                Component.translatable("text.feed-assist.description"),
                 this.width / 2,
                 this.height / 2 - 50,
-                0xA0A0A0
+                0xFFA0A0A0
         );
     }
 
     @Override
-    public void close() {
+    public void onClose() {
         if (rangeSlider != null) {
             ModConfig.setFeedRange(rangeSlider.getFeedRange());
             ModConfig.setEnabled(enabled);
             ModConfig.save();
         }
 
-        if (client != null) {
-            client.setScreen(parent);
+        if (minecraft != null) {
+            minecraft.setScreen(parent);
         }
     }
 
-    private Text getEnabledText() {
-        return Text.translatable(enabled
+    private Component getEnabledText() {
+        return Component.translatable(enabled
                 ? "text.feed-assist.option.enabled.on"
                 : "text.feed-assist.option.enabled.off");
     }
 
-    private static class RangeSliderWidget extends SliderWidget {
+    private static class RangeAbstractSliderButton extends AbstractSliderButton {
         private int feedRange;
 
-        RangeSliderWidget(int x, int y, int width, int height, int initialRange) {
-            super(x, y, width, height, Text.empty(), toSliderValue(initialRange));
+        RangeAbstractSliderButton(int x, int y, int width, int height, int initialRange) {
+            super(x, y, width, height, Component.empty(), toSliderValue(initialRange));
             setFeedRange(initialRange);
         }
 
@@ -85,7 +85,7 @@ public class FeedAssistConfigScreen extends Screen {
 
         @Override
         protected void updateMessage() {
-            setMessage(Text.translatable("text.feed-assist.option.range", feedRange));
+            setMessage(Component.translatable("text.feed-assist.option.range", feedRange));
         }
 
         @Override
@@ -111,4 +111,5 @@ public class FeedAssistConfigScreen extends Screen {
         }
     }
 }
+
 
