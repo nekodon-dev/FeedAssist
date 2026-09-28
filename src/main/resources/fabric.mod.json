@@ -6,7 +6,7 @@
   "description": "Feed nearby adult animals by right-clicking one with breeding food.",
   "authors": ["nekodon"],
   "license": "MIT",
-  "icon": "assets/feed-assist/icon.jpg",
+  "icon": "assets/feed-assist/icon.png",
   "environment": "*",
   "entrypoints": {
     "main": ["com.nekodon.feedassist.FeedAssist"],
